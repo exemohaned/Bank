@@ -1,0 +1,201 @@
+<!DOCTYPE html><html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الخدمات البنكية</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f9;
+      color: #333;
+    }
+    header {
+      background-color: #004aad;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+    }
+    main {
+      padding: 20px;
+    }
+    section {
+      margin: 20px 0;
+      padding: 20px;
+      background: #fff;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    label {
+      display: block;
+      margin: 10px 0 5px;
+    }
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    button {
+      background-color: #004aad;
+      color: #fff;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #00357c;
+    }
+    .nav-button {
+      margin: 5px 0;
+      padding: 10px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+    .nav-button:hover {
+      background-color: #0056b3;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      background-color: #eee;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>مرحبًا بك في خدماتنا البنكية</h1>
+  </header>
+  <main>
+    <section id="register">
+      <h2>إنشاء حساب جديد</h2>
+      <form id="registerForm">
+        <label>رقم الهاتف:</label>
+        <input type="text" id="phone" required>
+        <label>رقم الفيزا:</label>
+        <input type="text" id="cardNumber" required>
+        <label>نوع الفيزا:</label>
+        <input type="text" id="cardType" required>
+        <label>اسم البنك:</label>
+        <input type="text" id="bankName" required>
+        <label>نوع المحفظة (أورانج/فودافون):</label>
+        <input type="text" id="walletType" required>
+        <button type="submit">إنشاء الحساب</button>
+      </form>
+    </section><section id="services">
+  <h2>الخدمات</h2>
+  <button onclick="showDeposit()">إيداع</button>
+  <button onclick="showWithdraw()">سحب</button>
+  <button onclick="showBalance()">الاستعلام عن الرصيد</button>
+  <button onclick="showTransfer()">تحويل للمحفظة</button>
+</section>
+
+<section id="actions" style="display: none;">
+  <h2 id="actionTitle"></h2>
+  <form id="actionForm">
+    <label id="actionLabel"></label>
+    <input type="number" id="actionAmount" required>
+    <button type="submit">تأكيد</button>
+  </form>
+</section>
+
+<section id="output">
+  <h2>النتائج</h2>
+  <p id="result"></p>
+</section>
+
+  </main>
+  <footer>
+    <p>&copy; 2025 جميع الحقوق محفوظة</p>
+  </footer>  <script>
+    let userAccount = {
+      balance: 1000,
+      phone: '',
+      cardNumber: '',
+      cardType: '',
+      bankName: '',
+      walletType: ''
+    };
+
+    const registerForm = document.getElementById('registerForm');
+    const actionsSection = document.getElementById('actions');
+    const actionTitle = document.getElementById('actionTitle');
+    const actionLabel = document.getElementById('actionLabel');
+    const actionForm = document.getElementById('actionForm');
+    const actionAmount = document.getElementById('actionAmount');
+    const result = document.getElementById('result');
+
+    registerForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      userAccount.phone = document.getElementById('phone').value;
+      userAccount.cardNumber = document.getElementById('cardNumber').value;
+      userAccount.cardType = document.getElementById('cardType').value;
+      userAccount.bankName = document.getElementById('bankName').value;
+      userAccount.walletType = document.getElementById('walletType').value;
+      result.textContent = 'تم إنشاء الحساب بنجاح!';
+    });
+
+    function showDeposit() {
+      setupAction('إيداع الأموال', 'أدخل مبلغ الإيداع:');
+      actionForm.onsubmit = (e) => {
+        e.preventDefault();
+        const amount = parseFloat(actionAmount.value);
+        if (amount > 0) {
+          userAccount.balance += amount;
+          result.textContent = `تم إيداع ${amount} بنجاح. الرصيد الحالي: ${userAccount.balance}`;
+          actionsSection.style.display = 'none';
+        }
+      };
+    }
+
+    function showWithdraw() {
+      setupAction('سحب الأموال', 'أدخل مبلغ السحب:');
+      actionForm.onsubmit = (e) => {
+        e.preventDefault();
+        const amount = parseFloat(actionAmount.value);
+        if (amount > 0 && amount <= userAccount.balance) {
+          userAccount.balance -= amount;
+          result.textContent = `تم سحب ${amount} بنجاح. الرصيد الحالي: ${userAccount.balance}`;
+          actionsSection.style.display = 'none';
+        } else {
+          result.textContent = 'الرصيد غير كافٍ!';
+        }
+      };
+    }
+
+    function showBalance() {
+      actionsSection.style.display = 'none';
+      result.textContent = `رصيدك الحالي هو: ${userAccount.balance}`;
+    }
+
+    function showTransfer() {
+      setupAction('تحويل الأموال إلى المحفظة', `أدخل مبلغ التحويل إلى ${userAccount.walletType || 'المحفظة'}:`);
+      actionForm.onsubmit = (e) => {
+        e.preventDefault();
+        const amount = parseFloat(actionAmount.value);
+        if (amount > 0 && amount <= userAccount.balance) {
+          userAccount.balance -= amount;
+          result.textContent = `تم تحويل ${amount} إلى ${userAccount.walletType} بنجاح. الرصيد الحالي: ${userAccount.balance}`;
+          actionsSection.style.display = 'none';
+        } else {
+          result.textContent = 'الرصيد غير كافٍ!';
+        }
+      };
+    }
+
+    function setupAction(title, label) {
+      actionTitle.textContent = title;
+      actionLabel.textContent = label;
+      actionAmount.value = '';
+      actionsSection.style.display = 'block';
+      result.textContent = '';
+    }
+  </script></body>
+</html>
